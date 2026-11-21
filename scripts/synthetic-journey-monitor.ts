@@ -39,7 +39,7 @@ export const SYNTHETIC_JOURNEY_CLI_USAGE = [
 ].join(String.fromCharCode(10));
 
 function parseNonNegativeInteger(value: string | undefined, option: string): number {
-  if (value === undefined || !/^(0|[1-9]\\d*)$/.test(value)) {
+  if (value === undefined || !/^(0|[1-9]\d*)$/.test(value)) {
     throw new Error(`${option} requires a non-negative integer.`);
   }
   const parsed = Number(value);
