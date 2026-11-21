@@ -374,6 +374,10 @@ export function formatSyntheticJourneyReport(report: SyntheticJourneyReport): st
   lines.push(`Timestamp: ${report.timestamp}`);
   lines.push(`Overall Status: ${report.success ? '✅ SUCCESS' : '❌ FAILED'}`);
   lines.push(`Total Latency: ${report.totalLatencyMs}ms`);
+  if (report.attempts !== undefined) lines.push(`Attempts: ${report.attempts}`);
+  if (report.slaBreached !== undefined) {
+    lines.push(`SLA: ${report.slaBreached ? 'BREACHED' : 'WITHIN THRESHOLD'}`);
+  }
   lines.push('');
 
   lines.push('--- JOURNEY STEPS & LATENCIES ---');
