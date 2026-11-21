@@ -87,3 +87,26 @@ Response:
 - `POST /api/ops/synthetic-journey/run` accepts optional `{ retries, slaThresholdMs }` and requires `Authorization: Bearer <JOBS_ADMIN_TOKEN>` (`401`/`403` otherwise).
 - `GET /api/ops/synthetic-journey/history` returns recent bounded run reports (admin-authenticated).
 - **Recovery / Rollback**: Failed synthetic runs automatically clean up synthetic invoices in `finally` so no orphan test records remain.
+
+
+### Bounded CLI retries and SLA checks
+
+The standalone runner delegates to `SyntheticJourneyMonitor.runJourneyWithRetry()`
+so retries use the same bounded retry implementation and appear in the monitor's
+run history. Retry count is limited to 0–5 additional attempts; malformed,
+missing, or excessive values are rejected instead of silently becoming zero.
+
+```bash
+npm run journey:monitor -- --check --retries 2 --sla-ms 1500
+npm run journey:monitor -- --json --retries 1
+```
+
+The JSON and human-readable reports include the attempt count when retries are
+enabled and the SLA result when `--sla-ms` is supplied. In check mode, either a
+failed journey or an SLA breach returns exit code `1`. Without check mode the
+runner still emits the report and returns `0`, allowing operators to inspect a
+known failure without making an interactive shell step fail.
+
+Argument errors return exit code `2` and do not start a journey. A failed
+attempt is cleaned up by the monitor before the next attempt; no database
+schema or invoice API contract changes are required.
